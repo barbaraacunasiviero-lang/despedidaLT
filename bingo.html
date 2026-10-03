@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bingo Despe LT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Montserrat:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: una columna centrada como la invitación; portada con nombres → cartón 4x4 */
+:root {
+  --bg: #ffffff;
+  --ink: #3d3a3b;
+  --muted: #8f8a8b;
+  --red: #c8102e;
+  --red-soft: #fbe9ec;
+  --line: #ecdfe1;
+  --display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --body: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); margin: 0; }
+.wrap { max-width: 560px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 48px; text-align: center; }
+h1.brand { font-family: var(--display); font-weight: 700; color: var(--red); font-size: clamp(3rem, 12vw, 4.2rem); line-height: 1; margin: 0; }
+.quote { font-style: italic; color: var(--ink); opacity: .8; margin: 10px 0 2px; font-size: 1.05rem; }
+.by { color: var(--muted); font-size: .8rem; }
+h2.game { font-family: var(--display); font-weight: 900; color: var(--red); font-size: clamp(2.4rem, 10vw, 3.6rem); line-height: 1.05; margin: 28px 0 14px; text-wrap: balance; }
+.rules { font-size: 1.05rem; line-height: 1.7; max-width: 34ch; margin: 0 auto 26px; }
+.rules strong { color: var(--red); font-weight: 700; }
+.pick-label { text-transform: uppercase; letter-spacing: .14em; font-size: .75rem; font-weight: 600; color: var(--muted); margin-bottom: 14px; }
+.names { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.names button:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.pill { font-family: var(--body); font-weight: 700; font-size: 1.15rem; background: var(--red); color: #fff; border: 0; border-radius: 999px; padding: 16px 20px; cursor: pointer; transition: transform .12s, filter .12s; }
+.pill:hover { filter: brightness(1.08); }
+.pill:active { transform: scale(.97); }
+.pill:focus-visible, .cell:focus-visible, .ghost:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.pill .prog { display: block; font-size: .72rem; font-weight: 500; opacity: .85; margin-top: 2px; }
+
+/* Cartón */
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+.ghost { font-family: var(--body); background: none; border: 1.5px solid var(--line); color: var(--ink); border-radius: 999px; padding: 8px 14px; font-size: .85rem; font-weight: 600; cursor: pointer; }
+.ghost:hover { border-color: var(--red); color: var(--red); }
+.brand-sm { font-family: var(--display); color: var(--red); font-weight: 700; font-size: 1.4rem; }
+.owner { font-family: var(--display); font-weight: 900; color: var(--red); font-size: clamp(2.4rem, 11vw, 3.4rem); margin: 14px 0 2px; line-height: 1.05; }
+.sub { color: var(--muted); font-size: .9rem; margin-bottom: 18px; }
+.count { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--red); }
+.board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; border: 3px solid var(--red); border-radius: 18px; padding: 8px; }
+.cell { position: relative; min-width: 0; aspect-ratio: 1 / 1.08; background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px; padding: 6px 4px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; font-family: var(--body); color: var(--ink); transition: background .15s, border-color .15s; overflow: hidden; }
+.cell:hover { border-color: var(--red); }
+.cell .song { font-weight: 700; font-size: clamp(.62rem, 2.6vw, .82rem); line-height: 1.15; overflow-wrap: anywhere; hyphens: auto; }
+.cell .artist { font-size: clamp(.55rem, 2.1vw, .68rem); color: var(--muted); line-height: 1.1; overflow-wrap: anywhere; }
+.cell.on { background: var(--red-soft); border-color: var(--red); }
+.cell.on .song, .cell.on .artist { opacity: .45; }
+.cell .stamp { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; opacity: 0; transform: scale(1.6) rotate(-14deg); transition: opacity .18s, transform .22s cubic-bezier(.2,1.4,.4,1); }
+.cell.on .stamp { opacity: 1; transform: scale(1) rotate(-14deg); }
+.stamp span { width: 78%; aspect-ratio: 1; border-radius: 50%; border: 3px solid var(--red); color: var(--red); display: grid; place-items: center; font-family: var(--display); font-weight: 900; font-size: clamp(.8rem, 3.6vw, 1.15rem); background: rgba(200,16,46,.08); }
+.reset-row { margin-top: 22px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; align-items: center; font-size: .9rem; }
+.reset-row .confirm { color: var(--ink); }
+.danger { background: var(--red); color: #fff; border-color: var(--red); }
+.danger:hover { color: #fff; filter: brightness(1.08); }
+.hint { margin-top: 14px; color: var(--muted); font-size: .8rem; }
+
+/* Bingo */
+.overlay { position: fixed; inset: 0; background: rgba(200,16,46,.94); display: grid; place-items: center; z-index: 10; padding: 16px; text-align: center; color: #fff; }
+.overlay h3 { font-family: var(--display); font-weight: 900; font-size: clamp(4rem, 22vw, 8rem); margin: 0; line-height: 1; animation: pop .6s cubic-bezier(.2,1.5,.4,1); }
+.overlay p { font-size: 1.2rem; margin: 10px 0 26px; }
+.overlay .pill { background: #fff; color: var(--red); }
+@keyframes pop { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+canvas#confetti { position: fixed; inset: 0; pointer-events: none; z-index: 11; width: 100%; height: 100%; }
+@media (prefers-reduced-motion: reduce) { .overlay h3 { animation: none; } .cell .stamp { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section id="home">
+    <h1 class="brand">Despe LT</h1>
+    <p class="quote">"Nosotras tenemos mucha fiesta"</p>
+    <div class="by">— Jime</div>
+    <h2 class="game">Bingo musical</h2>
+    <p class="rules">Elegí tu cartón · cuando suene una canción que tenés, tocala para marcarla · <strong>gana la primera que completa el cartón entero. Línea no vale.</strong></p>
+    <div class="pick-label">Elegí tu cartón</div>
+    <div class="names" id="names"></div>
+  </section>
+
+  <section id="card" hidden>
+    <div class="topbar">
+      <button class="ghost" id="back">← Cartones</button>
+      <span class="brand-sm">Despe LT</span>
+    </div>
+    <div class="owner" id="owner"></div>
+    <div class="sub">Marcadas: <span class="count" id="count">0/16</span></div>
+    <div class="board" id="board"></div>
+    <div class="reset-row" id="resetRow"></div>
+    <p class="hint">Si te equivocaste, tocá la canción de nuevo para desmarcarla.</p>
+  </section>
+</div>
+
+<div class="overlay" id="win" hidden>
+  <div>
+    <h3>¡BINGO!</h3>
+    <p id="winText"></p>
+    <button class="pill" id="closeWin">Seguir</button>
+  </div>
+</div>
+<canvas id="confetti" hidden></canvas>
+
+<script>
+const SONGS = [
+  ["Dutty Love", "Don Omar ft. Natti Natasha"],
+  ["Boquinha da Garrafa", "Companhia do Pagode"],
+  ["Mejores Amigos", ""],
+  ["Butakera", ""],
+  ["Canción para mi ex", ""],
+  ["Los Piratas", "Los Auténticos Decadentes"],
+  ["Kilómetro 11", "Tránsito Cocomarola"],
+  ["YMCA", "Village People"],
+  ["Juegos de seducción", "Los del Fuego"],
+  ["Baile Inolvidable", "Bad Bunny"],
+  ["Magalenha", "Sérgio Mendes"],
+  ["Meneadito", ""],
+  ["La Isla del Sol", ""],
+  ["De Reversa Mami", ""],
+  ["Corazón Mentiroso", "Karina"],
+  ["Pa' la Gilada", ""],
+  ["Si Antes Te Hubiera Conocido", "Karol G"],
+  ["Soy Favela", ""],
+  ["La Villa", ""],
+  ["Amor de Vago", ""],
+  ["La Plena", "W Sound, Beéle y Ovy On The Drums"],
+  ["Carumbé", "Samba enredo"],
+  ["Zum Zum", "Samba enredo"],
+  ["Un Amor", "Lali"],
+  ["Miénteme", "TINI y María Becerra"],
+  ["Vuelve", "TINI y Ricky Martin"],
+  ["Novio Gangsta", "Emilia"],
+  ["Tuta Tuta", ""],
+  ["Para No Verte Más", "La Mosca Tsé-Tsé"],
+  ["Quiero Verla en el Show", ""]
+];
+const CARDS = {
+  "Jime":   [9,17,1,29,18,13,21,14,7,0,24,25,10,26,12,8],
+  "Bar":    [15,2,22,28,3,19,23,26,14,20,16,5,4,11,6,27],
+  "Joaqui": [5,4,28,19,25,20,11,10,17,6,12,29,1,18,3,23],
+  "Vicky":  [2,26,5,16,13,0,24,15,9,22,8,7,27,21,28,19],
+  "Fer":    [13,7,8,10,2,25,6,29,4,20,24,21,11,16,15,18],
+  "Rou":    [5,9,4,20,7,22,17,14,0,1,27,23,29,12,26,3],
+  "Cami":   [21,24,15,27,6,8,23,11,18,0,22,9,3,12,17,25]
+};
+const KEY = "despe-lt-bingo-v1";
+let marks = {};
+try { marks = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { marks = {}; }
+function save() { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} }
+
+const $ = id => document.getElementById(id);
+let current = null;
+
+function renderHome() {
+  const box = $("names"); box.innerHTML = "";
+  Object.keys(CARDS).forEach(name => {
+    const n = (marks[name] || []).length;
+    const b = document.createElement("button");
+    b.className = "pill"; b.id = "pick-" + name;
+    b.innerHTML = name + (n ? `<span class="prog">${n}/16 marcadas</span>` : "");
+    b.onclick = () => openCard(name);
+    box.appendChild(b);
+  });
+}
+
+function openCard(name) {
+  current = name;
+  $("home").hidden = true; $("card").hidden = false;
+  $("owner").textContent = "Cartón de " + name;
+  renderBoard(); renderReset(false);
+  window.scrollTo(0, 0);
+  try { history.replaceState(null, "", "#" + name.toLowerCase()); } catch (e) {}
+}
+
+function renderBoard() {
+  const set = new Set(marks[current] || []);
+  const board = $("board"); board.innerHTML = "";
+  CARDS[current].forEach(idx => {
+    const [song, artist] = SONGS[idx];
+    const c = document.createElement("button");
+    c.className = "cell" + (set.has(idx) ? " on" : "");
+    c.id = "cell-" + idx;
+    c.setAttribute("aria-pressed", set.has(idx));
+    c.innerHTML = `<span class="song">${song}</span>${artist ? `<span class="artist">${artist}</span>` : ""}<span class="stamp"><span>¡Sí!</span></span>`;
+    c.onclick = () => toggle(idx);
+    board.appendChild(c);
+  });
+  $("count").textContent = set.size + "/16";
+}
+
+function toggle(idx) {
+  const list = marks[current] || [];
+  const i = list.indexOf(idx);
+  if (i >= 0) list.splice(i, 1); else list.push(idx);
+  marks[current] = list; save();
+  const cell = $("cell-" + idx);
+  cell.classList.toggle("on", i < 0);
+  cell.setAttribute("aria-pressed", i < 0);
+  $("count").textContent = list.length + "/16";
+  if (i < 0 && list.length === 16) bingo();
+}
+
+function renderReset(confirming) {
+  const row = $("resetRow"); row.innerHTML = "";
+  if (!confirming) {
+    const b = document.createElement("button");
+    b.className = "ghost"; b.id = "resetBtn"; b.textContent = "Borrar marcas";
+    b.onclick = () => renderReset(true);
+    row.appendChild(b);
+  } else {
+    row.innerHTML = `<span class="confirm">¿Borrar todas las marcas de este cartón?</span>`;
+    const yes = document.createElement("button");
+    yes.className = "ghost danger"; yes.id = "resetYes"; yes.textContent = "Sí, borrar";
+    yes.onclick = () => { marks[current] = []; save(); renderBoard(); renderReset(false); };
+    const no = document.createElement("button");
+    no.className = "ghost"; no.id = "resetNo"; no.textContent = "Cancelar";
+    no.onclick = () => renderReset(false);
+    row.append(yes, no);
+  }
+}
+
+$("back").onclick = () => {
+  current = null; $("card").hidden = true; $("home").hidden = false; renderHome();
+  try { history.replaceState(null, "", location.pathname); } catch (e) {}
+};
+
+function bingo() {
+  $("winText").textContent = "¡" + current + " completó el cartón! Que lo griten bien fuerte.";
+  $("win").hidden = false;
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) confetti();
+}
+$("closeWin").onclick = () => { $("win").hidden = true; };
+
+function confetti() {
+  const cv = $("confetti"); cv.hidden = false;
+  const ctx = cv.getContext("2d");
+  const W = cv.width = innerWidth, H = cv.height = innerHeight;
+  const colors = ["#ffffff", "#ffd6dd", "#ffc94d", "#c8102e"];
+  const parts = Array.from({ length: 160 }, () => ({
+    x: Math.random() * W, y: -20 - Math.random() * H * .5,
+    vx: (Math.random() - .5) * 3, vy: 2 + Math.random() * 4,
+    r: 4 + Math.random() * 6, a: Math.random() * 6, c: colors[Math.floor(Math.random() * colors.length)]
+  }));
+  let t = 0;
+  (function frame() {
+    ctx.clearRect(0, 0, W, H);
+    parts.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.a += .1;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a);
+      ctx.fillStyle = p.c; ctx.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2); ctx.restore();
+    });
+    if (++t < 240) requestAnimationFrame(frame); else { ctx.clearRect(0, 0, W, H); cv.hidden = true; }
+  })();
+}
+
+renderHome();
+const h = (location.hash || "").slice(1);
+const match = Object.keys(CARDS).find(n => n.toLowerCase() === h);
+if (match) openCard(match);
+</script>
+</body>
+</html>
