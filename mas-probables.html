@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Las Más Probables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;0,6..96,900;1,6..96,500;1,6..96,700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f8f4ec;
+    --red:#c0101c;
+    --red-soft:#b52a2f;
+    --ink:#4a3f3a;
+    --serif:"Bodoni Moda","Didot","Bodoni 72","Playfair Display",Georgia,serif;
+    --sans:"Montserrat","Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg);
+    color:var(--red);
+    font-family:var(--serif);
+    overflow:hidden;
+    -webkit-tap-highlight-color:transparent;
+  }
+  /* papel con textura suave */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;
+    background-image:radial-gradient(rgba(120,90,60,.08) 1px,transparent 1px);
+    background-size:5px 5px;
+  }
+
+  .screen{
+    position:fixed;inset:0;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:clamp(24px,6vh,64px) clamp(20px,8vw,120px);
+    opacity:0;pointer-events:none;transition:opacity .45s ease;
+  }
+  .screen.on{opacity:1;pointer-events:auto}
+
+  .eyebrow{
+    font-family:var(--sans);font-size:clamp(10px,1.1vw,13px);
+    letter-spacing:.32em;text-transform:uppercase;color:var(--red-soft);
+    margin-bottom:clamp(14px,2.5vh,28px);
+  }
+
+  /* ---------- INICIO ---------- */
+  .title{
+    font-weight:900;text-transform:uppercase;line-height:.86;
+    font-size:clamp(46px,9.6vw,140px);letter-spacing:-.01em;padding-right:clamp(0px,12vw,180px);
+  }
+  .title .it{
+    display:block;font-style:italic;text-transform:none;font-weight:700;
+    font-size:.72em;padding-left:.45em;line-height:1.05;
+  }
+  .rules{
+    font-family:var(--serif);color:var(--ink);font-weight:700;
+    font-size:clamp(15px,1.7vw,22px);line-height:1.45;max-width:46ch;
+    margin-top:clamp(18px,3.5vh,36px);
+  }
+  .rules span{color:var(--red)}
+
+  .btn{
+    font-family:var(--sans);text-transform:uppercase;letter-spacing:.3em;
+    font-size:clamp(11px,1.2vw,14px);color:var(--red);
+    background:transparent;border:1.5px solid var(--red);
+    padding:1.1em 2.6em;cursor:pointer;transition:background .2s,color .2s;
+  }
+  .btn:hover,.btn:focus-visible{background:var(--red);color:var(--bg);outline:none}
+  .btn.ghost{border-color:transparent;padding-left:.4em;padding-right:.4em;opacity:.7}
+  .btn.ghost:hover{background:transparent;color:var(--red);opacity:1}
+  .btn[disabled]{visibility:hidden}
+  .actions{display:flex;gap:18px;align-items:center;margin-top:clamp(22px,4.5vh,48px);position:relative;z-index:2}
+
+  /* ---------- FRASE ---------- */
+  .q-lead{
+    font-style:italic;font-weight:500;color:var(--red-soft);
+    font-size:clamp(22px,3.4vw,46px);line-height:1;
+    display:flex;align-items:baseline;gap:.25em;flex-wrap:wrap;
+  }
+  .q-num{
+    font-style:normal;font-weight:900;color:var(--red);
+    font-size:clamp(90px,17vw,230px);line-height:.8;
+    margin:0 .06em;
+  }
+  .q-text{
+    font-weight:900;text-transform:uppercase;line-height:.92;
+    margin-top:clamp(12px,2.2vh,26px);max-width:15ch;
+    font-size:var(--qs,clamp(40px,7.6vw,112px));
+    letter-spacing:-.005em;
+    animation:rise .5s ease both;
+  }
+  .q-lead{animation:rise .5s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  .counter{
+    position:fixed;right:clamp(18px,4vw,48px);bottom:clamp(16px,3vh,32px);
+    font-family:var(--sans);font-size:12px;letter-spacing:.3em;color:var(--red-soft);
+  }
+
+  /* ---------- FINAL ---------- */
+  .end .title{font-size:clamp(50px,12vw,160px)}
+
+  /* ---------- DOODLES ---------- */
+  .doodle{position:fixed;pointer-events:none;z-index:1}
+  .glass{right:clamp(8px,5vw,90px);top:clamp(10px,3vh,40px);width:clamp(80px,11vw,150px)}
+  .hearts{right:clamp(30px,8vw,140px);bottom:clamp(40px,7vh,80px);width:clamp(110px,13vw,180px)}
+  .doodle path,.doodle ellipse{fill:none;stroke:var(--red-soft);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+  .doodle .fill{fill:#b3141c;stroke:none}
+  .doodle .lip{stroke-width:7;opacity:.85}
+  @media (max-width:640px){
+    .glass{width:70px;top:12px;right:10px;opacity:.9}
+    .hearts{width:90px;right:auto;left:6px;bottom:6px;opacity:.85}
+    .q-text{max-width:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- copa dibujada a mano -->
+<svg class="doodle glass" viewBox="0 0 120 230" aria-hidden="true">
+  <defs><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter></defs>
+  <g filter="url(#rough)">
+    <path d="M22 8 C 14 40, 8 80, 22 110 C 34 132, 86 132, 98 110 C 112 80, 106 40, 98 8 Z"/>
+    <path d="M24 12 C 50 4, 72 4, 96 12" />
+    <path d="M60 128 C 59 155, 61 180, 60 208"/>
+    <ellipse cx="60" cy="214" rx="34" ry="9"/>
+    <path class="fill" d="M60 112 C 40 96, 28 84, 32 70 C 36 58, 52 58, 60 72 C 68 58, 84 58, 88 70 C 92 84, 80 96, 60 112 Z"/>
+  </g>
+</svg>
+
+<!-- corazones de rouge -->
+<svg class="doodle hearts" viewBox="0 0 200 200" aria-hidden="true">
+  <defs><filter id="lipstick"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" seed="8"/><feDisplacementMap in="SourceGraphic" scale="4"/></filter></defs>
+  <g filter="url(#lipstick)">
+    <path class="lip" d="M40 140 C 14 112, 10 82, 24 72 C 36 64, 44 74, 46 86 C 50 70, 62 64, 70 74 C 80 88, 66 116, 40 140 Z" transform="rotate(-8 40 105)"/>
+    <path class="lip" d="M110 92 C 88 66, 86 40, 98 32 C 108 26, 114 36, 116 46 C 120 34, 132 30, 138 40 C 146 54, 134 76, 110 92 Z" transform="rotate(10 115 60)"/>
+    <path class="lip" d="M120 190 C 98 172, 92 152, 102 144 C 110 138, 118 144, 121 152 C 124 142, 136 138, 142 146 C 150 158, 140 176, 120 190 Z"/>
+  </g>
+</svg>
+
+<!-- INICIO -->
+<section class="screen on" id="start">
+  <p class="eyebrow">Despedida de Jime · Río 2026</p>
+  <h1 class="title">¿Quiénes son<span class="it">las más</span>probables que…?</h1>
+  <p class="rules">Cerrar los ojos · escuchar la consigna y levantar la mano · abrir los ojos · <span>si hay justo ese número de manos, ganan todas; si no, toman todas.</span></p>
+  <div class="actions"><button class="btn" id="go">Comenzar</button></div>
+</section>
+
+<!-- FRASE -->
+<section class="screen" id="play">
+  <p class="eyebrow" id="eyebrow">Ojos cerrados</p>
+  <div class="q-lead" id="lead"></div>
+  <h2 class="q-text" id="qtext"></h2>
+  <div class="actions">
+    <button class="btn" id="next">Siguiente</button>
+    <button class="btn ghost" id="prev">← Anterior</button>
+  </div>
+  <div class="counter" id="counter"></div>
+</section>
+
+<!-- FINAL -->
+<section class="screen end" id="end">
+  <p class="eyebrow">Fin del juego</p>
+  <h1 class="title">¡Salud<span class="it">por la</span>novia!</h1>
+  <p class="rules">Que lo que pasa en Río… se quede en Río.</p>
+  <div class="actions"><button class="btn" id="again">Volver a empezar</button></div>
+</section>
+
+<script>
+const F = [
+  [2,"le escriban a su ex"],
+  [3,"pierdan el celular, el DNI o la billetera en el viaje"],
+  [5,"se hagan un tatuaje sin pensarlo"],
+  [2,"tengan un crush con el personal trainer"],
+  [3,"se enamoren en 24 horas"],
+  [4,"vuelvan con alguien que dijeron no volver nunca más"],
+  [6,"se den un beso con alguien sin saber cómo se llama"],
+  [8,"terminen en un after sin saber cómo llegaron"],
+  [3,"tengan alguna app de citas"],
+  [5,"se chapen a alguien del trabajo"],
+  [2,"hayan tenido un “amigo” que nunca fue solo amigo"],
+  [3,"mientan sobre dónde estuvieron anoche"],
+  [3,"hagan un trío"],
+  [6,"manden una nude"],
+  [2,"hagan algo en un lugar público"],
+  [1,"garche en este viaje"],
+  [5,"estén con alguien en la primera noche"],
+  [1,"haya fingido un orgasmo"],
+  [1,"tenga una cita con dos chicos en la misma semana"],
+  [2,"se animen a hacer topless en la playa"],
+  [1,"esté con alguien y al otro día no se acuerde"],
+  [4,"tomen la pastilla del día después"],
+  [3,"estén con un chico con novia"],
+  [8,"estén con una mujer"],
+  [2,"estén con alguien 15 años más grande"],
+  [1,"esté con dos chicos en la misma noche"],
+  [5,"hagan una videollamada hot"],
+  [1,"lo haga en un baño de boliche"],
+  [3,"lo hagan en un auto"],
+  [2,"sean infieles"],
+  [7,"tengan una relación abierta"],
+  [1,"pueda estar con un famoso"],
+  [1,"sea la próxima en casarse (después de Jime)"],
+];
+
+const $ = id => document.getElementById(id);
+let i = 0;
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id));
+}
+
+function render(){
+  const [n, t] = F[i];
+  const lead = $('lead'), q = $('qtext');
+  lead.innerHTML = n === 1
+    ? '¿Quién es la <span class="q-num">1</span> más probable que…'
+    : `¿Quiénes son las <span class="q-num">${n}</span> más probables que…`;
+  q.textContent = t + '?';
+  // tamaño según largo de la frase
+  const L = t.length;
+  const size = L < 22 ? 'clamp(48px,9.5vw,140px)'
+             : L < 36 ? 'clamp(40px,7.4vw,110px)'
+             : 'clamp(32px,5.8vw,86px)';
+  q.style.setProperty('--qs', size);
+  // reiniciar animación
+  [lead,q].forEach(el=>{el.style.animation='none'; el.offsetHeight; el.style.animation='';});
+  $('counter').textContent = `${String(i+1).padStart(2,'0')} / ${F.length}`;
+  $('prev').disabled = i === 0;
+  $('next').textContent = i === F.length-1 ? 'Terminar' : 'Siguiente';
+}
+
+function next(){ if(i < F.length-1){ i++; render(); } else show('end'); }
+function prev(){ if(i > 0){ i--; render(); } }
+
+$('go').onclick = () => { i = 0; render(); show('play'); };
+$('next').onclick = next;
+$('prev').onclick = prev;
+$('again').onclick = () => show('start');
+
+document.addEventListener('keydown', e=>{
+  if(!$('play').classList.contains('on')) return;
+  if(e.key==='ArrowRight' || e.key===' ') { e.preventDefault(); next(); }
+  if(e.key==='ArrowLeft') prev();
+});
+</script>
+</body>
+</html>
